@@ -254,6 +254,12 @@ h1,h2,h3{font-family:'Barlow Condensed','Barlow',sans-serif;text-transform:upper
 }
 .dir-link{display:inline-block;margin-top:10px;font-weight:600;color:var(--orange-dk);font-size:12.5px}
 
+/* coach card (non-routed booking option) */
+.coach-body{padding:14px}
+.coach-note{font-size:12.5px;color:#4a4641;line-height:1.5;margin:0 0 12px}
+.coach-book{display:inline-block;background:var(--orange);color:var(--ink);font-weight:700;font-size:13px;padding:9px 16px;border-radius:999px;text-decoration:none}
+.coach-book:hover{background:#e0760f}
+
 /* panel footer / brand */
 .panel-foot{
   padding:16px;border-top:1px solid var(--line);text-align:center;
@@ -376,32 +382,29 @@ h1,h2,h3{font-family:'Barlow Condensed','Barlow',sans-serif;text-transform:upper
 /* ============================================================================
    EVENT CONFIG  —  the only block that changes between events
    ----------------------------------------------------------------------------
-   Source: BBC Radio 2 in the Park, Stirling — TTP v3.0 (05/06/26).
+   Source: BBC Radio 2 in the Park, Stirling — TTP v3.0 + V1 amends (10/06/26).
    DATE confirmed: Fri 11 – Sun 13 September 2026 (gates Fri 16:30, Sat/Sun 10:30).
-   v3.0 changes applied: Park & Ride = Springkerse + University (Castleview is now
-      the coach/PUDO Venue Transport Hub, not self-park); M9 J9 from south / J10
-      from north; Edinburgh rail line-closure wording softened (workaround TBC);
-      regional coaches (Happy Bus) and PUDO surfaced in the notice.
-   ⚠️ Still TBC: hub postcodes & what3words, coach/shuttle booking URLs, full
-      venue postcode — none block deployment.
+   V1 amends (10/06/26): no Park & Ride option (mode removed); parking junction now by
+      COLOUR — J9 = Red areas, J10 = Blue areas; closures notice simplified (times,
+      diversion + RPZ text removed); rail wording trimmed; coaches now a single Happy Bus
+      booking link (regional-coach/PUDO/accessible paragraph removed).
+   ⚠️ Still TBC: car-park Red/Blue zone confirmation, hub & car-park postcodes/what3words,
+      exact venue coordinate (vs ///burns.shine.sheet) — none block deployment.
    ========================================================================== */
 const EVENT = {
   name:    "BBC Radio 2 in the Park",
   venue:   "City Park, Stirling",
   date:    "11–13 September 2026",     // confirmed September (Alex). Fri–Sun event = 11–13 Sept 2026.
   time:    "Friday gates 16:30 · Saturday & Sunday gates 10:30",
-  address: "City Park, Stirling FK8 1UD",   // ⚠️ confirm full postcode
-  modes:   ["shuttle", "train", "drive", "walk", "cycle"],
+  address: "City Park, Dumbarton Road, Stirling",   // ⚠️ full postcode TBC — pin is set from coords below, not geocoded
+  modes:   ["train", "drive", "walk", "cycle"],   // park & ride removed (V1 amends 10/06/26)
 
   notice:
-    "<strong>All parking is pre-book only</strong> — there is no casual parking at the venue. Leave the M9 at Junction 9 from the south or Junction 10 from the north, then follow event signage. " +
-    "<strong>Dumbarton Road is closed</strong> on event days (Fri from 12:00, Sat/Sun from approx. 07:00) — follow signed diversion routes. A Resident Protection Zone is in force on nearby residential streets. " +
-    "<strong>Rail:</strong> a line closure is planned between Edinburgh and Stirling on the event weekend — replacement arrangements are being finalised, so Edinburgh passengers should check " +
+    "<strong>All parking is pre-book only</strong> — there is no casual parking at the venue. For pre-booked parking, exit the M9 at Junction 9 for Red parking areas and Junction 10 for Blue parking areas, then follow event signage." +
+    "<br><br><strong>There will be local closures in operation around the event perimeter.</strong>" +
+    "<br><br><strong>Rail:</strong> a line closure is planned between Edinburgh and Stirling on the event weekend, Edinburgh passengers should check " +
     "<a href='https://www.scotrail.co.uk' target='_blank' rel='noopener'>scotrail.co.uk</a> before travelling. Glasgow, Perth, Dundee and other routes operate normally. " +
-    "<strong>Sunday rail capacity is limited</strong> in the evening — plan your return in advance. " +
-    "<strong>Regional coaches</strong> (Happy Bus, around £25–£30) serve major towns and cities, dropping at the Venue Transport Hub; tickets go on sale alongside event tickets. Friends &amp; family drop-off (PUDO) is at Castleview, off the A84. " +
-    "Accessible parking (Blue Badge / Nimbus) is pre-book via " +
-    "<a href='https://www.officialbbceventparking.com/Events.aspx?CustomerId=91' target='_blank' rel='noopener'>official event parking</a>.",
+    "<strong>Sunday rail capacity is limited</strong> in the evening — plan your return in advance.",
 
   carParks: [
     {
@@ -419,20 +422,25 @@ const EVENT = {
       notes:   "Pre-booked Park & Ride at the University campus (South and West car parks, around 600 spaces). Frequent shuttle buses run directly to City Park."
     }
   ],
-  // NOTE (v3.0): Castleview is now the Venue Transport Hub / Castle View Business Park —
-  // regional & shuttle coaches, local buses, friends/family PUDO and the Accessible
-  // Transport Hub. It is NOT a public self-park Park & Ride, so it's surfaced in the
-  // notice banner rather than as a drive-to shuttle hub.
+  // NOTE: Park & Ride was removed in the V1 amends (10/06/26), so the carParks array
+  // above and buildShuttle() are no longer used by the planner — retained only for
+  // reference should Park & Ride return. Castleview remains the coach/transport hub.
 
   // Park & Walk car parks — DRIVE option routes here (park, then walk into City Park),
-  // since there is no parking at the venue. Distinct from the Park & Ride hubs above.
-  // ⚠️ postcodes / what3words TBC — names geocode fine in the meantime.
+  // since there is no parking at the venue. The official approach junction follows the
+  // parking area's COLOUR (J9 = Red areas, J10 = Blue areas). Data from the master parking
+  // list (Park & Walk, public, set up for sale). Price = sale price incl. £2.50 booking fee.
+  // ⚠️ Postcodes still missing for Thistles, Marches, Castle Business Park, Kildean (geocode by name).
   parkWalk: [
-    { name:"Thistles Multi-Storey",  address:"Thistles Shopping Centre, Stirling",  parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Large city-centre multi-storey, a short walk from City Park via the southern corridor." },
-    { name:"Forthside Car Park",     address:"Forthside Way, Stirling",              parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Central car park close to the station and the southern walking route." },
-    { name:"Wellgreen Multi-Storey", address:"Wellgreen Car Park, Stirling",         parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre multi-storey within walking distance of the venue." },
-    { name:"Castle Business Park",   address:"Castle Business Park, Stirling",        parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Park & Walk to the north of the venue, near the A84 corridor." },
-    { name:"Forth Valley College",   address:"Forth Valley College, Stirling",       parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Park & Walk site a short distance from City Park." }
+    { name:"The Thistles Shopping Centre", zone:"Red",  junction:"j9",  address:"The Thistles Shopping Centre, Stirling", w3w:"",                    price:22.50, walkMin:18, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre shopping-centre car park." },
+    { name:"The Marches Shopping Centre",  zone:"Red",  junction:"j9",  address:"The Marches Shopping Centre, Stirling",  w3w:"",                    price:22.50, walkMin:18, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre shopping-centre car park." },
+    { name:"Wellgreen Multi-Storey",       zone:"Red",  junction:"j9",  address:"Wellgreen Car Park, Stirling FK8 2DY",   w3w:"galaxy.park.rescue",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre multi-storey." },
+    { name:"Forthside Car Park",           zone:"Red",  junction:"j9",  address:"Forthside Car Park, Stirling FK8 1QZ",   w3w:"normal.loser.worth",  price:17.50, walkMin:25, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Near the station and Forthside." },
+    { name:"Engine Shed",                  zone:"Red",  junction:"j9",  address:"Engine Shed, Stirling FK8 1RB",          w3w:"reveal.silver.brand", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Beside the Engine Shed." },
+    { name:"Linden Avenue Car Park",       zone:"Red",  junction:"j9",  address:"Linden Avenue Car Park, Stirling FK7 7PQ", w3w:"advice.crowned.slice", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"South of the city centre." },
+    { name:"Castle Business Park",         zone:"Blue", junction:"j10", address:"Castle Business Park, Stirling",         w3w:"",                    price:27.50, walkMin:11, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Closest walk to the venue (north, off the A84)." },
+    { name:"Forth Valley College",         zone:"Blue", junction:"j10", address:"Forth Valley College, Stirling FK8 1SE", w3w:"really.stays.dumps",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Stirling campus." },
+    { name:"Kildean Business Hub",         zone:"Blue", junction:"j10", address:"Kildean Business Hub, Stirling",         w3w:"",                    price:17.50, walkMin:22, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"North of the centre, near Kildean." }
   ],
 
   routing: {
@@ -448,7 +456,7 @@ const EVENT = {
   },
 
   driveInfo: {
-    warning:      "All event parking is pre-book only — there is no parking at the venue. From the south, leave the M9 at Junction 9 (A872/A91); from the north, use Junction 10 — then follow event signage to your booked car park. Dumbarton Road is closed on event days. A Resident Protection Zone is in operation — do not park on surrounding residential streets.",
+    warning:      "All event parking is pre-book only — there is no parking at the venue. Exit the M9 at Junction 9 for Red parking areas or Junction 10 for Blue parking areas, then follow event signage to your booked car park.",
     bookingUrl:   "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
     bookingLabel: "Book parking"
   },
@@ -456,8 +464,21 @@ const EVENT = {
   brand: { logo:"BBC Radio 2 in the Park", product:"Journey Planner", tagline:"Smart Travel · Lower Carbon" },
   showEco: true,
 
-  /* fallback venue coordinates (used until geocode resolves) — City Park / King's Park area, Stirling */
-  fallbackLatLng: { lat: 56.1124, lng: -3.9442 }
+  // Coach travel option — shown as its own card (not routed) with the Happy Bus booking link.
+  showCoach: true,
+  coachInfo: {
+    sub:          "Direct services to the event",
+    note:         "Coach services run to the event from major towns and cities, dropping at the Venue Transport Hub. Book your seat in advance with Happy Bus.",
+    bookingUrl:   "https://www.happybus.co.uk/bbc-radio-2-in-the-park-stirling-11th-13th-september-2026-c-1622",
+    bookingLabel: "Book with Happy Bus"
+  },
+
+  /* Venue pin — set directly from these coordinates (NOT geocoded), so it lands on the
+     event ground reliably even if address geocoding is unavailable. Best estimate: the
+     open parkland below Stirling Castle, off Dumbarton Road (Kings Knot → Falleninch).
+     ⚠️ Confirm precisely against the TMP what3words ///burns.shine.sheet. */
+  coords: { lat: 56.1210, lng: -3.9560 },
+  w3w:    "burns.shine.sheet"
 };
 
 /* ---- CONSTANTS ------------------------------------------------------------ */
@@ -489,7 +510,8 @@ const MODE_META = {
   train:{   label:"Train", icon:'<rect x="6" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M6 11h12M9 21l-2 0m8 0l2 0M9.5 21l1.5-3m2 3l-1.5-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/>'},
   drive:{   label:"Drive & Park", icon:'<path d="M5 16l1.2-4.3A2 2 0 018.1 10h7.8a2 2 0 011.9 1.7L19 16M5 16h14M5 16v2a1 1 0 001 1h1a1 1 0 001-1v-1m8 0v1a1 1 0 001 1h1a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="16" r="1.1" fill="currentColor"/><circle cx="16" cy="16" r="1.1" fill="currentColor"/>'},
   walk:{    label:"Walk", icon:'<circle cx="13" cy="4.5" r="1.8" stroke="currentColor" stroke-width="1.8"/><path d="M11 21l1.5-5 2.5 1.5V21M11 21l-1-4 2-3 .5-3 3 2 2 1M9 11l2-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
-  cycle:{   label:"Cycle", icon:'<circle cx="6" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M6 17l4-7h5l-3 7M10 10l-1.5-3H6m9 0h2.5L18 17M14.5 7L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'}
+  cycle:{   label:"Cycle", icon:'<circle cx="6" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M6 17l4-7h5l-3 7M10 10l-1.5-3H6m9 0h2.5L18 17M14.5 7L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
+  coach:{   label:"Coach", icon:'<rect x="3" y="5" width="18" height="11.5" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10.5h18M7 16.5v1.5M17 16.5v1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="13.5" r="0.9" fill="currentColor"/><circle cx="16.5" cy="13.5" r="0.9" fill="currentColor"/>'}
 };
 
 /* ============================ MAP INIT ============================ */
@@ -504,9 +526,9 @@ function initMap(){
   geocoder   = new google.maps.Geocoder();
   dirService = new google.maps.DirectionsService();
 
-  const start = EVENT.fallbackLatLng;
+  const start = EVENT.coords;
   map = new google.maps.Map(document.getElementById("map"), {
-    center:start, zoom:12, mapTypeControl:false, streetViewControl:false,
+    center:start, zoom:13, mapTypeControl:false, streetViewControl:false,
     fullscreenControl:false, clickableIcons:false,
     styles:[
       {featureType:"poi",elementType:"labels",stylers:[{visibility:"off"}]},
@@ -519,12 +541,11 @@ function initMap(){
     polylineOptions:{ strokeColor:"#F4831F", strokeWeight:5, strokeOpacity:.9 }
   });
 
-  // resolve venue location
-  geocoder.geocode({ address:EVENT.address, region:"GB" }, (res,status)=>{
-    venueLatLng = (status==="OK" && res[0]) ? res[0].geometry.location : new google.maps.LatLng(start.lat,start.lng);
-    map.setCenter(venueLatLng);
-    placeVenuePin();
-  });
+  // venue pin: use the configured coordinates directly (not geocoded) so it lands on the
+  // event ground regardless of address/geocoding availability
+  venueLatLng = new google.maps.LatLng(EVENT.coords.lat, EVENT.coords.lng);
+  map.setCenter(venueLatLng);
+  placeVenuePin();
 
   // origin autocomplete — OPTIONAL. If the Places library is unavailable
   // (not enabled on the key, or legacy Autocomplete gated for the key), the
@@ -559,6 +580,7 @@ function placeVenuePin(){
       <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=400&q=70" alt="">
       <h3>${EVENT.name}</h3>
       <p>${EVENT.venue}</p>
+      <p style="color:#C45F08;font-weight:600">///${EVENT.w3w}</p>
       <p>${EVENT.time}</p>
       <p class="iw-date">${EVENT.date}</p>
     </div>`
@@ -655,18 +677,19 @@ function steps(result){
   return out;
 }
 
-/* ---- official-approach routing: force via M9 J9 (south) or J10 (north) ----
-   Skipped for local origins (<6km) so we don't invent pointless motorway detours. */
-function approachWaypoint(origin){
+/* ---- official-approach routing: force via the junction assigned to the parking area
+   (J9 = Red areas, J10 = Blue areas). Skipped for local origins (<6km) so we don't
+   invent pointless motorway detours. ---- */
+function junctionWaypoint(origin, which){
   try{
     if(google.maps.geometry &&
        google.maps.geometry.spherical.computeDistanceBetween(origin, venueLatLng) < 6000) return null;
   }catch(e){ /* geometry unavailable — still force the junction */ }
-  const j = (origin.lat() < venueLatLng.lat()) ? EVENT.routing.j9 : EVENT.routing.j10;
+  const j = EVENT.routing[which] || EVENT.routing.j9;
   return new google.maps.LatLng(j.lat, j.lng);
 }
-function driveRequest(origin, destination){
-  const via = approachWaypoint(origin);
+function driveRequest(origin, destination, which){
+  const via = which ? junctionWaypoint(origin, which) : null;
   const req = { origin, destination, travelMode:google.maps.TravelMode.DRIVING };
   if(via) req.waypoints = [{ location:via, stopover:false }];
   return req;
@@ -705,7 +728,7 @@ async function buildSimple(origin, mode, gMode){
    (there is no parking at the venue), with a short walk into City Park ---- */
 async function buildDrive(origin){
   const results = await Promise.all(EVENT.parkWalk.map(cp=>
-    route(driveRequest(origin, cp.address)).then(r=> r ? {cp,r,t:legTotals(r)} : null)
+    route(driveRequest(origin, cp.address, cp.junction)).then(r=> r ? {cp,r,t:legTotals(r)} : null)
   ));
   const valid = results.filter(Boolean);
   if(!valid.length) return null;
@@ -713,13 +736,15 @@ async function buildDrive(origin){
   const best = valid[0];
 
   const driveKm = best.t.km;
+  const jLabel = best.cp.junction==="j10" ? "Junction 10" : "Junction 9";
+  const w3wTxt = best.cp.w3w ? ` what3words: ///${best.cp.w3w}.` : "";
   return packResult({
-    mode:"drive", durMin:best.t.min + DRIVE_WALK_EXTRA_MIN, km:driveKm,
+    mode:"drive", durMin:best.t.min + (best.cp.walkMin || DRIVE_WALK_EXTRA_MIN), km:driveKm,
     co2:driveKm*CO2.drive,
-    cost:`~£${(driveKm*FUEL_PER_KM).toFixed(0)} fuel + parking`,
+    cost:`£${best.cp.price.toFixed(2)} + fuel`,
     sub:`Park at ${best.cp.name}`,
     badges:[],
-    tip:`Park at ${best.cp.name} (your nearest pre-booked car park) and walk into City Park. ${best.cp.notes} From the south, leave the M9 at Junction 9; from the north, use Junction 10. All parking is pre-book only — there is no parking at the venue.`,
+    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)} including the booking fee; there is no parking at the venue.${w3wTxt}`,
     link:{ url:best.cp.parkUrl, label:EVENT.driveInfo.bookingLabel },
     routeResult:best.r
   });
@@ -832,6 +857,26 @@ function renderResults(){
 
     list.appendChild(card);
   });
+
+  // Coach: a non-routed booking option, always pinned to the end of the list
+  if(EVENT.showCoach && EVENT.coachInfo){
+    const c = EVENT.coachInfo;
+    const cc = document.createElement("div");
+    cc.className = "card coach-card";
+    cc.innerHTML = `
+      <div class="coach-body">
+        <div class="card-top" style="margin-bottom:8px">
+          <span class="mode-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none">${MODE_META.coach.icon}</svg></span>
+          <span>
+            <span class="mode-title">${MODE_META.coach.label}</span>
+            <span class="mode-sub" style="display:block">${c.sub}</span>
+          </span>
+        </div>
+        <p class="coach-note">${c.note}</p>
+        <a class="coach-book" href="${c.bookingUrl}" target="_blank" rel="noopener">${c.bookingLabel} <span aria-hidden="true">→</span></a>
+      </div>`;
+    list.appendChild(cc);
+  }
 
   // draw the recommended (first) route by default
   if(arr[0]) dirRenderer.setDirections(arr[0].routeResult);
