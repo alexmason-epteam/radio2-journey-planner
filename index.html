@@ -427,27 +427,14 @@ const EVENT = {
   // reference should Park & Ride return. Castleview remains the coach/transport hub.
 
   // Park & Walk car parks — DRIVE option routes here (park, then walk into City Park),
-  // since there is no parking at the venue. The official approach junction follows the
-  // parking area's COLOUR (J9 = Red areas, J10 = Blue areas). Data from the master parking
-  // list (Park & Walk, public, set up for sale). Price = sale price incl. £2.50 booking fee.
-  // ⚠️ Postcodes still missing for Thistles, Marches, Castle Business Park, Kildean (geocode by name).
+  // Only car parks marked "Ready for Sale = Yes" on the master parking list are shown.
+  // Junction is given as guidance in the card text only (J9 = Red, J10 = Blue); the route
+  // itself is NOT force-routed through a junction (that created odd out-and-back detours).
+  // Add more here as further car parks flip to "Ready for Sale = Yes".
   parkWalk: [
-    { name:"The Thistles Shopping Centre", zone:"Red",  junction:"j9",  address:"The Thistles Shopping Centre, Stirling", w3w:"",                    price:22.50, walkMin:18, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre shopping-centre car park." },
-    { name:"The Marches Shopping Centre",  zone:"Red",  junction:"j9",  address:"The Marches Shopping Centre, Stirling",  w3w:"",                    price:22.50, walkMin:18, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre shopping-centre car park." },
-    { name:"Wellgreen Multi-Storey",       zone:"Red",  junction:"j9",  address:"Wellgreen Car Park, Stirling FK8 2DY",   w3w:"galaxy.park.rescue",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"City-centre multi-storey." },
-    { name:"Forthside Car Park",           zone:"Red",  junction:"j9",  address:"Forthside Car Park, Stirling FK8 1QZ",   w3w:"normal.loser.worth",  price:17.50, walkMin:25, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Near the station and Forthside." },
-    { name:"Engine Shed",                  zone:"Red",  junction:"j9",  address:"Engine Shed, Stirling FK8 1RB",          w3w:"reveal.silver.brand", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Beside the Engine Shed." },
-    { name:"Linden Avenue Car Park",       zone:"Red",  junction:"j9",  address:"Linden Avenue Car Park, Stirling FK7 7PQ", w3w:"advice.crowned.slice", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"South of the city centre." },
-    { name:"Castle Business Park",         zone:"Blue", junction:"j10", address:"Castle Business Park, Stirling",         w3w:"",                    price:27.50, walkMin:11, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Closest walk to the venue (north, off the A84)." },
-    { name:"Forth Valley College",         zone:"Blue", junction:"j10", address:"Forth Valley College, Stirling FK8 1SE", w3w:"really.stays.dumps",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Stirling campus." },
-    { name:"Kildean Business Hub",         zone:"Blue", junction:"j10", address:"Kildean Business Hub, Stirling",         w3w:"",                    price:17.50, walkMin:22, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"North of the centre, near Kildean." }
+    { name:"Engine Shed",          zone:"Red",  junction:"j9",  address:"Engine Shed, Stirling FK8 1RB",          w3w:"reveal.silver.brand", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Beside the Engine Shed, near the station." },
+    { name:"Forth Valley College", zone:"Blue", junction:"j10", address:"Forth Valley College, Stirling FK8 1SE", w3w:"really.stays.dumps",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Stirling campus." }
   ],
-
-  routing: {
-    // M9 junctions used to force the official approach (south → J9, north → J10).
-    j9:  { lat: 56.0840, lng: -3.9170 },  // M9 Junction 9 (Pirnhall) — southern approach
-    j10: { lat: 56.1270, lng: -3.9640 }   // M9 Junction 10 (Craigforth) — northern approach
-  },
 
   trainInfo: {
     stations:   "Stirling Railway Station — about 1 mile (a 15–20 min walk) from City Park via the southern route through the city centre.",
@@ -677,22 +664,11 @@ function steps(result){
   return out;
 }
 
-/* ---- official-approach routing: force via the junction assigned to the parking area
-   (J9 = Red areas, J10 = Blue areas). Skipped for local origins (<6km) so we don't
-   invent pointless motorway detours. ---- */
-function junctionWaypoint(origin, which){
-  try{
-    if(google.maps.geometry &&
-       google.maps.geometry.spherical.computeDistanceBetween(origin, venueLatLng) < 6000) return null;
-  }catch(e){ /* geometry unavailable — still force the junction */ }
-  const j = EVENT.routing[which] || EVENT.routing.j9;
-  return new google.maps.LatLng(j.lat, j.lng);
-}
-function driveRequest(origin, destination, which){
-  const via = which ? junctionWaypoint(origin, which) : null;
-  const req = { origin, destination, travelMode:google.maps.TravelMode.DRIVING };
-  if(via) req.waypoints = [{ location:via, stopover:false }];
-  return req;
+/* ---- driving request: route directly to the car park. The official junction (J9 = Red,
+   J10 = Blue) is given as text guidance in the card, NOT forced into the route, since
+   hard-forcing a junction produced odd out-and-back detours. ---- */
+function driveRequest(origin, destination){
+  return { origin, destination, travelMode:google.maps.TravelMode.DRIVING };
 }
 
 /* ---- single-mode builder (train / walk / cycle — direct to venue) ---- */
@@ -728,7 +704,7 @@ async function buildSimple(origin, mode, gMode){
    (there is no parking at the venue), with a short walk into City Park ---- */
 async function buildDrive(origin){
   const results = await Promise.all(EVENT.parkWalk.map(cp=>
-    route(driveRequest(origin, cp.address, cp.junction)).then(r=> r ? {cp,r,t:legTotals(r)} : null)
+    route(driveRequest(origin, cp.address)).then(r=> r ? {cp,r,t:legTotals(r)} : null)
   ));
   const valid = results.filter(Boolean);
   if(!valid.length) return null;
