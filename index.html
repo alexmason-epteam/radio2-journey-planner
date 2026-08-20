@@ -309,12 +309,7 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 .taxi-note{font-size:11.5px;color:var(--grey);line-height:1.4}
 .taxi-share{font-size:11.5px;color:#2A3550;line-height:1.4;margin-top:2px}
 .taxi-share strong{color:var(--ink)}
-.taxi-copy{
-  margin-left:auto;flex-shrink:0;background:var(--blue-light);color:var(--blue-dk);
-  border:1px solid #CFE0F5;border-radius:999px;font-family:inherit;font-weight:600;
-  font-size:11.5px;padding:6px 12px;cursor:pointer;align-self:center;
-}
-.taxi-copy:hover{background:#DEEAFA}
+
 
 /* panel footer / brand */
 .panel-foot{
@@ -1168,17 +1163,7 @@ function renderResults(){
           <span class="taxi-note">${tx.note}</span>
           <span class="taxi-share">${tx.shareLabel}: <strong>${tx.shareLocation}</strong></span>
         </div>
-        <button class="taxi-copy" type="button" aria-label="Copy the taxi rank location to share with your driver">Copy</button>
       </div>`;
-    tc.querySelector(".taxi-copy").addEventListener("click", (e)=>{
-      const btn = e.currentTarget;
-      const done = ()=>{ btn.textContent="Copied ✓"; setTimeout(()=> btn.textContent="Copy", 2000); };
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(tx.shareLocation).then(done).catch(()=>{ window.prompt("Copy this location:", tx.shareLocation); });
-      } else {
-        window.prompt("Copy this location:", tx.shareLocation);
-      }
-    });
     list.appendChild(tc);
   }
 
