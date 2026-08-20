@@ -301,6 +301,21 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 .coach-book{display:inline-block;background:var(--navy);color:#fff;font-weight:700;font-size:13px;padding:9px 16px;border-radius:999px;text-decoration:none}
 .coach-book:hover{background:#252a49}
 
+/* compact taxi strip */
+.taxi-body{display:flex;align-items:flex-start;gap:10px;padding:10px 12px}
+.taxi-ico{width:32px;height:32px;flex-shrink:0}
+.taxi-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.taxi-title{font-family:'Poppins',sans-serif;font-weight:600;font-size:13.5px;color:var(--ink)}
+.taxi-note{font-size:11.5px;color:var(--grey);line-height:1.4}
+.taxi-share{font-size:11.5px;color:#2A3550;line-height:1.4;margin-top:2px}
+.taxi-share strong{color:var(--ink)}
+.taxi-copy{
+  margin-left:auto;flex-shrink:0;background:var(--blue-light);color:var(--blue-dk);
+  border:1px solid #CFE0F5;border-radius:999px;font-family:inherit;font-weight:600;
+  font-size:11.5px;padding:6px 12px;cursor:pointer;align-self:center;
+}
+.taxi-copy:hover{background:#DEEAFA}
+
 /* panel footer / brand */
 .panel-foot{
   padding:16px;border-top:1px solid var(--line);text-align:center;
@@ -518,22 +533,24 @@ const EVENT = {
   // Coach travel option — shown as its own card (not routed) with the Happy Bus booking link.
   // Local-traveller options (Taxi & Family PUDO) — shown only when the origin is
   // within LOCAL_MAX_MIN drive of the venue (TTP: strong local PUDO/taxi demand).
-  localInfo: [
-    {
-      key:"taxi",
+  localInfo: {
+    taxi: {
       title:"Taxi / private hire",
-      sub:"Queen's Road pick-up & drop-off",
-      note:"The event taxi rank is off-site on the B8051 Queen's Road (agreed with Stirling Council) — a short walk from the venue via the city centre. Taxi and private-hire numbers in Stirling are limited, so pre-book your return where possible. Accessible customers can be picked up and dropped off at the Accessible Transport Hub on site.",
+      // compact card; shareLocation is the copyable text for the driver
+      shareLabel:"Drop-off / pick-up point",
+      shareLocation:"Event taxi rank, B8051 Queen's Road, Stirling FK8 2RD",
+      note:"Off-site rank, short walk to the venue. Pre-book your return — local taxis are limited.",
       icon:'<path d="M5 16l1.2-4.3A2 2 0 018.1 10h7.8a2 2 0 011.9 1.7L19 16M5 16h14M5 16v2a1 1 0 001 1h1a1 1 0 001-1v-1m8 0v1a1 1 0 001 1h1a1 1 0 001-1v-2M9 10V8a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
     },
-    {
-      key:"pudo",
+    pudo: {
       title:"Friends & family drop-off",
       sub:"Castleview Park & Ride (PUDO)",
-      note:"Being dropped off or picked up by friends or family? Use the dedicated PUDO at Castleview Park & Ride — vehicles enter near Kildean Roundabout, and it's a signed walk to the venue from Castleview Roundabout along the Blue Walking Route. Do not drop off on roads around the venue: clearways are in force and stopping is not permitted.",
+      // routed: destination for the drive route from the user's origin
+      destination:"Castleview Park & Ride, Stirling FK9 4TW",
+      note:"Use the dedicated PUDO at Castleview Park & Ride — vehicles enter near Kildean Roundabout; it's a signed walk to the venue from Castleview Roundabout along the Blue Walking Route. Do not drop off on roads around the venue: clearways are in force and stopping is not permitted.",
       icon:'<path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zM8 13c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zM16 13c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>'
     }
-  ],
+  },
   showCoach: true,
   coachInfo: {
     sub:          "Direct services to the event",
@@ -604,6 +621,7 @@ const MODE_META = {
   drive:{   label:"Drive & Park", icon:'<path d="M5 16l1.2-4.3A2 2 0 018.1 10h7.8a2 2 0 011.9 1.7L19 16M5 16h14M5 16v2a1 1 0 001 1h1a1 1 0 001-1v-1m8 0v1a1 1 0 001 1h1a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="16" r="1.1" fill="currentColor"/><circle cx="16" cy="16" r="1.1" fill="currentColor"/>'},
   walk:{    label:"Walk", icon:'<circle cx="13" cy="4.5" r="1.8" stroke="currentColor" stroke-width="1.8"/><path d="M11 21l1.5-5 2.5 1.5V21M11 21l-1-4 2-3 .5-3 3 2 2 1M9 11l2-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
   cycle:{   label:"Cycle", icon:'<circle cx="6" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><circle cx="18" cy="17" r="3.2" stroke="currentColor" stroke-width="1.8"/><path d="M6 17l4-7h5l-3 7M10 10l-1.5-3H6m9 0h2.5L18 17M14.5 7L15 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
+  pudo:{    label:"Drop-off (PUDO)", icon:'<path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zM8 13c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zM16 13c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>'},
   coach:{   label:"Coach", icon:'<rect x="3" y="5" width="18" height="11.5" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 10.5h18M7 16.5v1.5M17 16.5v1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="13.5" r="0.9" fill="currentColor"/><circle cx="16.5" cy="13.5" r="0.9" fill="currentColor"/>'}
 };
 
@@ -614,7 +632,7 @@ function initMap(){
                2) carparks.json in this repo (GitHub-edited fallback)
                3) baked-in EVENT.parkWalk list below (never fails)
      To activate the Sheet: paste its published-CSV link into SHEET_CSV_URL. */
-  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRtmHbeqxm2j3cyGO8UNYR-cA5kpvnPvTM-U6q-8Mh3mFuGwTyXqCQt_sn-wyXht-AzNlVKnGvxpKsr/pub?gid=0&single=true&output=csv"; // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv"
+  const SHEET_CSV_URL = ""; // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv"
 
   function parseSheetCSV(text){
     // simple CSV parse (handles quoted cells with commas)
@@ -861,6 +879,7 @@ async function planJourney(){
   if(EVENT.modes.includes("drive"))   jobs.push(buildDrive(origin.loc));
   if(EVENT.modes.includes("walk"))    jobs.push(buildSimple(origin.loc,"walk","WALKING"));
   if(EVENT.modes.includes("cycle"))   jobs.push(buildSimple(origin.loc,"cycle","BICYCLING"));
+  jobs.push(buildPudo(origin.loc));   // routed only if origin is local (checked inside)
 
   const settled = await Promise.all([...jobs, gateJob.then(()=>null)]);
   currentResults = settled.filter(Boolean);
@@ -931,6 +950,26 @@ async function buildSimple(origin, mode, gMode){
 
 /* ---- drive: force the official approach, then route to the nearest Park & Walk car park
    (there is no parking at the venue), with a short walk into City Park ---- */
+/* ============================================================================
+   DRIVE TIMES — DELIBERATE DESIGN DECISION (do not "improve" without reading)
+   ----------------------------------------------------------------------------
+   Drive durations shown are Google's TYPICAL (traffic-free baseline) times, and
+   they are labelled as such in the UI. We deliberately do NOT request predicted
+   or live traffic (drivingOptions.departureTime / duration_in_traffic).
+
+   Why: Google's traffic model is built from historical patterns for a NORMAL
+   day. It cannot see this event — the road closures (Dumbarton Rd, A84), the
+   clearways, the stop/go on Drip Road, or ~24,000 people converging on two M9
+   junctions. A precise-looking "in traffic" figure would therefore be
+   confidently wrong on exactly the day it matters, and could influence the
+   wrong behaviour (e.g. leaving too late because the tool "said 38 minutes").
+
+   EP Team's experience: better to be honest — show the typical time, tell the
+   user clearly that event-day traffic will be heavier, and direct them to
+   check live conditions on Google Maps close to departure for their specific
+   circumstances. Expectation-setting is the tool's job; live traffic is
+   Google Maps' job on the day.
+   ========================================================================== */
 async function buildDrive(origin){
   // Only route to car parks that are ON SALE (status from carparks.json).
   // 'soldout' sites are mentioned but never routed to; 'hidden' sites are ignored.
@@ -960,14 +999,38 @@ async function buildDrive(origin){
   const w3wTxt = best.cp.w3w ? ` what3words: ///${best.cp.w3w}.` : "";
   const soldTxt = soldOut.length ? ` (${soldOut.map(c=>c.name).join(", ")} ${soldOut.length>1?"are":"is"} sold out for ${ {fri:"Friday",sat:"Saturday",sun:"Sunday"}[currentDay] }.)` : "";
   return packResult({
-    mode:"drive", durMin:best.t.min + (best.cp.walkMin || DRIVE_WALK_EXTRA_MIN), km:driveKm,
+    mode:"drive", typicalTime:true,
+    durMin:best.t.min + (best.cp.walkMin || DRIVE_WALK_EXTRA_MIN), km:driveKm,
     co2:driveKm*CO2.drive,
     cost:`£${best.cp.price.toFixed(2)} + fuel`,
     sub:`Park at ${best.cp.name}`,
     badges:[],
-    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)}; there is no parking at the venue.${w3wTxt}${soldTxt}`,
+    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)}; there is no parking at the venue.${w3wTxt}${soldTxt} *The time shown is a typical drive time and does not include event-day traffic — roads around Stirling will be much busier than normal, with closures in place. Allow plenty of extra time, and check live traffic on Google Maps shortly before you set off.`,
     link:{ url:best.cp.parkUrl, label:EVENT.driveInfo.bookingLabel },
     routeResult:best.r
+  });
+}
+
+/* ---- Friends & family PUDO: routed drive to Castleview, local origins only ---- */
+async function buildPudo(origin){
+  // gate: only offer for origins within LOCAL_MAX_MIN drive of the venue
+  await new Promise(res=>{ const t=setInterval(()=>{ if(originDriveMin!==null){clearInterval(t);res();} },100); setTimeout(()=>{clearInterval(t);res();},4000); });
+  if(originDriveMin === null || originDriveMin > 60) return null;
+  const p = EVENT.localInfo && EVENT.localInfo.pudo;
+  if(!p) return null;
+  const r = await route({ origin, destination:p.destination, travelMode:google.maps.TravelMode.DRIVING });
+  if(!r) return null;
+  const t = legTotals(r);
+  return packResult({
+    mode:"pudo", typicalTime:true,
+    durMin:t.min + 13,   // TTP: ~13 min signed walk from Castleview to the venue
+    km:t.km, co2:t.km*CO2.drive,
+    cost:"Free",
+    sub:p.sub,
+    badges:[],
+    tip:p.note + " *Drive time shown is typical and excludes event-day traffic — allow extra and check live conditions before setting off.",
+    link:null,
+    routeResult:r
   });
 }
 
@@ -1013,7 +1076,7 @@ async function buildShuttle(origin){
 function packResult(o){
   const meta = MODE_META[o.mode];
   return {
-    mode:o.mode, label:meta.label, icon:meta.icon,
+    mode:o.mode, label:meta.label, icon:meta.icon, typicalTime:!!o.typicalTime,
     durMin:o.durMin, durText:fmtDur(o.durMin), km:o.km,
     co2:o.co2, co2Text:o.co2<=0 ? "0" : o.co2.toFixed(1),
     cost:o.cost, sub:o.sub, badges:o.badges||[], tip:o.tip, link:o.link,
@@ -1057,7 +1120,7 @@ function renderResults(){
           <span class="badges">${badges}</span>
         </div>
         <div class="card-stats">
-          <div class="stat"><div class="stat-val">${r.durText}</div><div class="stat-lbl">Time</div></div>
+          <div class="stat"><div class="stat-val">${r.durText}</div><div class="stat-lbl">${r.typicalTime ? "Typical time*" : "Time"}</div></div>
           <div class="stat stat-co2"><div class="stat-val">${r.co2Text}<span style="font-size:11px"> kg</span></div><div class="stat-lbl">CO₂ pp</div></div>
           <div class="stat"><div class="stat-val" style="font-size:14px">${r.cost}</div><div class="stat-lbl">Cost est.</div></div>
         </div>
@@ -1091,25 +1154,32 @@ function renderResults(){
     list.appendChild(card);
   });
 
-  // Local options (taxi rank, family PUDO): only for origins within an hour's drive
+  // Taxi: compact local-only strip with a copyable location for the driver
   const LOCAL_MAX_MIN = 60;
-  if(Array.isArray(EVENT.localInfo) && originDriveMin !== null && originDriveMin <= LOCAL_MAX_MIN){
-    EVENT.localInfo.forEach(li=>{
-      const lc = document.createElement("div");
-      lc.className = "card coach-card";
-      lc.innerHTML = `
-        <div class="coach-body">
-          <div class="card-top" style="margin-bottom:8px">
-            <span class="mode-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none">${li.icon}</svg></span>
-            <span>
-              <span class="mode-title">${li.title}</span>
-              <span class="mode-sub" style="display:block">${li.sub}</span>
-            </span>
-          </div>
-          <p class="coach-note">${li.note}</p>
-        </div>`;
-      list.appendChild(lc);
+  if(EVENT.localInfo && EVENT.localInfo.taxi && originDriveMin !== null && originDriveMin <= LOCAL_MAX_MIN){
+    const tx = EVENT.localInfo.taxi;
+    const tc = document.createElement("div");
+    tc.className = "card taxi-card";
+    tc.innerHTML = `
+      <div class="taxi-body">
+        <span class="mode-ico taxi-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none">${tx.icon}</svg></span>
+        <div class="taxi-text">
+          <span class="taxi-title">${tx.title}</span>
+          <span class="taxi-note">${tx.note}</span>
+          <span class="taxi-share">${tx.shareLabel}: <strong>${tx.shareLocation}</strong></span>
+        </div>
+        <button class="taxi-copy" type="button" aria-label="Copy the taxi rank location to share with your driver">Copy</button>
+      </div>`;
+    tc.querySelector(".taxi-copy").addEventListener("click", (e)=>{
+      const btn = e.currentTarget;
+      const done = ()=>{ btn.textContent="Copied ✓"; setTimeout(()=> btn.textContent="Copy", 2000); };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(tx.shareLocation).then(done).catch(()=>{ window.prompt("Copy this location:", tx.shareLocation); });
+      } else {
+        window.prompt("Copy this location:", tx.shareLocation);
+      }
     });
+    list.appendChild(tc);
   }
 
   // Coach: a non-routed booking option, always pinned to the end of the list
