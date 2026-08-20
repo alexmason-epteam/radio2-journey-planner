@@ -122,7 +122,9 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 .lh-venue svg{color:var(--blue-soft)}
 
 /* search */
-.search-wrap{padding:16px 16px 4px}
+.daypick{padding:14px 16px 0}
+.daypick-legend{font-size:12px;font-weight:600;color:var(--grey);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.search-wrap{padding:12px 16px 4px}
 .search-label{font-size:12px;font-weight:600;color:var(--grey);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:block}
 .search-pill{
   display:flex;align-items:center;background:var(--white);border:1.5px solid var(--line);
@@ -204,6 +206,7 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 .allcp-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
 .allcp-list{display:none;margin-top:8px}
 .allcp-list.open{display:block}
+.cp-day-note{font-size:12px;color:var(--grey);margin:0 2px 8px}
 .cp-row{
   display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);
   border-radius:9px;padding:9px 11px;margin-bottom:7px;font-size:12.5px;
@@ -366,6 +369,16 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
     </section>
 
     <!-- search -->
+    <!-- day picker -->
+    <div class="daypick" role="group" aria-label="Which day are you attending?">
+      <div class="daypick-legend" id="day-legend">Which day are you going?</div>
+      <div class="pill-row" aria-labelledby="day-legend">
+        <button class="pill day-pill" data-day="fri" aria-pressed="false" type="button">Fri 11</button>
+        <button class="pill day-pill" data-day="sat" aria-pressed="true" type="button">Sat 12</button>
+        <button class="pill day-pill" data-day="sun" aria-pressed="false" type="button">Sun 13</button>
+      </div>
+    </div>
+
     <div class="search-wrap">
       <label class="search-label" for="origin-input">Where are you starting from?</label>
       <div class="search-pill">
@@ -452,7 +465,7 @@ const EVENT = {
   modes:   ["train", "drive", "walk", "cycle"],   // park & ride removed (V1 amends 10/06/26)
 
   notice:
-    "<strong>All parking is pre-book only</strong> — there is no casual parking at the venue. For pre-booked parking, exit the M9 at Junction 9 for Red parking areas and Junction 10 for Blue parking areas, then follow event signage." +
+    "<strong>All parking is pre-book only</strong> — there is no casual parking at the venue. For pre-booked parking, exit the M9 at Junction 9 and follow the A91 for Red parking areas, or exit at Junction 10 for Blue parking areas, then follow event signage." +
     "<br><br><strong>There will be local closures in operation around the event perimeter.</strong>" +
     "<br><br><strong>Rail:</strong> on Saturday and Sunday the Edinburgh–Stirling line is closed for engineering works — travel via Glasgow (Queen Street) or use the rail-replacement buses from Linlithgow/Polmont, and check " +
     "<a href='https://www.scotrail.co.uk' target='_blank' rel='noopener'>scotrail.co.uk</a> before travelling. Glasgow, Perth, Dundee and other routes operate normally. " +
@@ -494,7 +507,7 @@ const EVENT = {
   },
 
   driveInfo: {
-    warning:      "All event parking is pre-book only — there is no parking at the venue. Exit the M9 at Junction 9 for Red parking areas or Junction 10 for Blue parking areas, then follow event signage to your booked car park.",
+    warning:      "All event parking is pre-book only — there is no parking at the venue. Exit the M9 at Junction 9 and follow the A91 for Red parking areas, or exit at Junction 10 for Blue parking areas, then follow event signage to your booked car park.",
     bookingUrl:   "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
     bookingLabel: "Book parking"
   },
@@ -503,6 +516,24 @@ const EVENT = {
   showEco: true,
 
   // Coach travel option — shown as its own card (not routed) with the Happy Bus booking link.
+  // Local-traveller options (Taxi & Family PUDO) — shown only when the origin is
+  // within LOCAL_MAX_MIN drive of the venue (TTP: strong local PUDO/taxi demand).
+  localInfo: [
+    {
+      key:"taxi",
+      title:"Taxi / private hire",
+      sub:"Queen's Road pick-up & drop-off",
+      note:"The event taxi rank is off-site on the B8051 Queen's Road (agreed with Stirling Council) — a short walk from the venue via the city centre. Taxi and private-hire numbers in Stirling are limited, so pre-book your return where possible. Accessible customers can be picked up and dropped off at the Accessible Transport Hub on site.",
+      icon:'<path d="M5 16l1.2-4.3A2 2 0 018.1 10h7.8a2 2 0 011.9 1.7L19 16M5 16h14M5 16v2a1 1 0 001 1h1a1 1 0 001-1v-1m8 0v1a1 1 0 001 1h1a1 1 0 001-1v-2M9 10V8a1 1 0 011-1h4a1 1 0 011 1v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    },
+    {
+      key:"pudo",
+      title:"Friends & family drop-off",
+      sub:"Castleview Park & Ride (PUDO)",
+      note:"Being dropped off or picked up by friends or family? Use the dedicated PUDO at Castleview Park & Ride — vehicles enter near Kildean Roundabout, and it's a signed walk to the venue from Castleview Roundabout along the Blue Walking Route. Do not drop off on roads around the venue: clearways are in force and stopping is not permitted.",
+      icon:'<path d="M16 11c1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3 1.3 3 3 3zM8 11c1.7 0 3-1.3 3-3S9.7 5 8 5 5 6.3 5 8s1.3 3 3 3zM8 13c-2.3 0-7 1.2-7 3.5V19h14v-2.5C15 14.2 10.3 13 8 13zM16 13c-.3 0-.6 0-1 .1 1.2.8 2 2 2 3.4V19h6v-2.5c0-2.3-4.7-3.5-7-3.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" fill="none"/>'
+    }
+  ],
   showCoach: true,
   coachInfo: {
     sub:          "Direct services to the event",
@@ -542,6 +573,19 @@ const ENRICH_ENDPOINT = ""; // e.g. "/.netlify/functions/enrich"
 let map, geocoder, dirService, dirRenderer, autocomplete;
 let venueLatLng = null, venueMarker = null, venueInfo = null, originMarker = null;
 let currentResults = [], currentPriority = "eco";
+let originDriveMin = null;  // drive time from origin to venue, used to gate local-only cards
+let currentDay = "sat";     // fri | sat | sun — set by the day picker
+
+/* Per-day status for a car park. Supports the new per-day fields (statusFri/Sat/Sun
+   from the Google Sheet or carparks.json) and falls back to the legacy single
+   `status` + `days` fields so an old file still works. */
+function cpStatus(cp, day){
+  const key = "status" + day.charAt(0).toUpperCase() + day.slice(1); // statusFri etc
+  let s = (cp[key] || cp.status || "onsale").toLowerCase().trim();
+  if(!["onsale","soldout","hidden"].includes(s)) s = "hidden";
+  if(!cp[key] && cp.days === "satsun" && day === "fri") s = "hidden"; // legacy Sat/Sun-only
+  return s;
+}
 
 const MODE_META = {
   shuttle:{ label:"Park & Ride / Shuttle", icon:'<path d="M4 16V7a2 2 0 012-2h12a2 2 0 012 2v9M4 16h16M4 16v2a1 1 0 001 1h1a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h1a1 1 0 001-1v-2M7 19V9m10 10V9M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
@@ -554,16 +598,69 @@ const MODE_META = {
 
 /* ============================ MAP INIT ============================ */
 function initMap(){
-  // Load the live car park list (carparks.json in this repo). Falls back to the
-  // baked-in EVENT.parkWalk list if the file can't be fetched or is malformed.
-  fetch("carparks.json", { cache:"no-store" })
-    .then(r=> r.ok ? r.json() : null)
-    .then(d=>{
-      if(d && Array.isArray(d.carParks) && d.carParks.length){
-        EVENT.parkWalk = d.carParks;
-      }
-    })
-    .catch(e=> console.warn("carparks.json unavailable — using built-in fallback list.", e));
+  /* ---- Live car park data ------------------------------------------------
+     Priority: 1) Google Sheet (published CSV — team edits this, no deploys)
+               2) carparks.json in this repo (GitHub-edited fallback)
+               3) baked-in EVENT.parkWalk list below (never fails)
+     To activate the Sheet: paste its published-CSV link into SHEET_CSV_URL. */
+  const SHEET_CSV_URL = ""; // e.g. "https://docs.google.com/spreadsheets/d/e/XXXX/pub?gid=0&single=true&output=csv"
+
+  function parseSheetCSV(text){
+    // simple CSV parse (handles quoted cells with commas)
+    const rows=[]; let row=[], cell="", q=false;
+    for(let i=0;i<text.length;i++){
+      const ch=text[i];
+      if(q){ if(ch==='"'){ if(text[i+1]==='"'){cell+='"';i++;} else q=false; } else cell+=ch; }
+      else if(ch==='"') q=true;
+      else if(ch===','){ row.push(cell); cell=""; }
+      else if(ch==='\n'){ row.push(cell); rows.push(row); row=[]; cell=""; }
+      else if(ch!=='\r') cell+=ch;
+    }
+    if(cell!=="" || row.length){ row.push(cell); rows.push(row); }
+    if(rows.length<2) return null;
+    const head = rows[0].map(x=>x.toLowerCase().replace(/[^a-z0-9]/g,""));
+    const col = n=> head.indexOf(n);
+    const need = ["name","zone","fri","sat","sun"];
+    if(need.some(n=> col(n)<0)) return null;   // headers renamed/missing -> reject, fall back
+    const out=[];
+    for(let r=1;r<rows.length;r++){
+      const g=(n)=> (rows[r][col(n)]||"").trim();
+      if(!g("name")) continue;
+      out.push({
+        name:g("name"),
+        zone:/blue/i.test(g("zone")) ? "Blue" : "Red",
+        junction:/blue/i.test(g("zone")) ? "j10" : "j9",
+        statusFri:g("fri").toLowerCase(), statusSat:g("sat").toLowerCase(), statusSun:g("sun").toLowerCase(),
+        address:g("address")||g("name")+", Stirling",
+        w3w:g("w3w"),
+        price:parseFloat(g("price"))||15,
+        walkMin:parseInt(g("walkmin"))||20,
+        parkUrl:g("bookingurl")||"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+        notes:g("notes")||""
+      });
+    }
+    return out.length ? out : null;
+  }
+
+  function loadCarParkJSON(){
+    fetch("carparks.json", { cache:"no-store" })
+      .then(r=> r.ok ? r.json() : null)
+      .then(d=>{ if(d && Array.isArray(d.carParks) && d.carParks.length) EVENT.parkWalk = d.carParks; })
+      .catch(e=> console.warn("carparks.json unavailable — using built-in fallback list.", e));
+  }
+
+  if(SHEET_CSV_URL){
+    fetch(SHEET_CSV_URL, { cache:"no-store" })
+      .then(r=> r.ok ? r.text() : null)
+      .then(t=>{
+        const parsed = t ? parseSheetCSV(t) : null;
+        if(parsed){ EVENT.parkWalk = parsed; }
+        else { console.warn("Google Sheet unreadable — falling back to carparks.json."); loadCarParkJSON(); }
+      })
+      .catch(e=>{ console.warn("Google Sheet fetch failed — falling back to carparks.json.", e); loadCarParkJSON(); });
+  } else {
+    loadCarParkJSON();
+  }
 
   // Wire up the UI and static content FIRST, so the planner still works even
   // if optional Maps features (autocomplete / markers) fail to load.
@@ -642,19 +739,21 @@ function placeVenuePin(){
 /* ---- all-car-parks list (driven by carparks.json via EVENT.parkWalk) ---- */
 function renderAllCarParks(){
   const el = document.getElementById("allcp-list");
-  const cps = EVENT.parkWalk.filter(c=> c.status!=="hidden");
-  if(!cps.length){ el.innerHTML = '<div class="cp-row"><span class="cp-meta">Event car park details will appear here when parking goes on sale.</span></div>'; return; }
-  el.innerHTML = cps.map(c=>{
-    const j = c.junction==="j10" ? "M9 J10" : "M9 J9";
-    const day = c.days==="satsun" ? " · Sat & Sun only" : "";
-    const status = c.status==="soldout"
+  if(!el) return;
+  const dayName = {fri:"Friday",sat:"Saturday",sun:"Sunday"}[currentDay];
+  const cps = EVENT.parkWalk.filter(c=> cpStatus(c,currentDay)!=="hidden");
+  if(!cps.length){ el.innerHTML = `<div class="cp-row"><span class="cp-meta">No event car parks are currently listed for ${dayName}. Check back as more are released.</span></div>`; return; }
+  el.innerHTML = `<div class="cp-day-note">Showing availability for <strong>${dayName}</strong></div>` + cps.map(c=>{
+    const st = cpStatus(c,currentDay);
+    const j = c.junction==="j10" ? "M9 J10" : "M9 J9 · A91";
+    const status = st==="soldout"
       ? '<span class="cp-status soldout">Sold out</span>'
       : '<span class="cp-status onsale">On sale</span>';
-    const book = c.status==="soldout" ? "" : `<a class="cp-book" href="${c.parkUrl}" target="_blank" rel="noopener">Book →</a>`;
+    const book = st==="soldout" ? "" : `<a class="cp-book" href="${c.parkUrl}" target="_blank" rel="noopener">Book →</a>`;
     return `<div class="cp-row">
       <span>
         <span class="cp-name">${c.name}</span><br>
-        <span class="cp-meta">${c.zone} zone · ${j} · ~${c.walkMin} min walk${day}</span>
+        <span class="cp-meta">${c.zone} zone · ${j} · ~${c.walkMin} min walk</span>
       </span>
       ${status}${book}
     </div>`;
@@ -668,6 +767,16 @@ function bindUI(){
     const open = nt.getAttribute("aria-expanded")==="true";
     nt.setAttribute("aria-expanded", String(!open));
     document.getElementById("notice-body").classList.toggle("open", !open);
+  });
+  document.querySelectorAll(".day-pill").forEach(p=>{
+    p.addEventListener("click", ()=>{
+      document.querySelectorAll(".day-pill").forEach(x=> x.setAttribute("aria-pressed","false"));
+      p.setAttribute("aria-pressed","true");
+      currentDay = p.dataset.day;
+      renderAllCarParks();
+      // re-plan with the new day if a journey is already showing
+      if(currentResults.length) planJourney();
+    });
   });
   const at = document.getElementById("allcp-toggle");
   at.addEventListener("click", ()=>{
@@ -730,6 +839,11 @@ async function planJourney(){
   list.innerHTML = `<div class="loading"><div class="spinner" aria-hidden="true"></div>Finding the best ways to reach City Park…</div>`;
   document.getElementById("results-head").classList.add("show");
 
+  // measure drive-time to the venue to decide whether local-only options (taxi, PUDO) apply
+  originDriveMin = null;
+  const gateJob = route({ origin:origin.loc, destination:venueLatLng, travelMode:google.maps.TravelMode.DRIVING })
+    .then(r=>{ if(r) originDriveMin = legTotals(r).min; });
+
   const jobs = [];
   if(EVENT.modes.includes("shuttle")) jobs.push(buildShuttle(origin.loc));
   if(EVENT.modes.includes("train"))   jobs.push(buildSimple(origin.loc,"train","TRANSIT"));
@@ -737,7 +851,7 @@ async function planJourney(){
   if(EVENT.modes.includes("walk"))    jobs.push(buildSimple(origin.loc,"walk","WALKING"));
   if(EVENT.modes.includes("cycle"))   jobs.push(buildSimple(origin.loc,"cycle","BICYCLING"));
 
-  const settled = await Promise.all(jobs);
+  const settled = await Promise.all([...jobs, gateJob.then(()=>null)]);
   currentResults = settled.filter(Boolean);
 
   if(!currentResults.length){
@@ -802,14 +916,14 @@ async function buildSimple(origin, mode, gMode){
 async function buildDrive(origin){
   // Only route to car parks that are ON SALE (status from carparks.json).
   // 'soldout' sites are mentioned but never routed to; 'hidden' sites are ignored.
-  const onSale  = EVENT.parkWalk.filter(cp=> (cp.status||"onsale")==="onsale");
-  const soldOut = EVENT.parkWalk.filter(cp=> cp.status==="soldout");
+  const onSale  = EVENT.parkWalk.filter(cp=> cpStatus(cp,currentDay)==="onsale");
+  const soldOut = EVENT.parkWalk.filter(cp=> cpStatus(cp,currentDay)==="soldout");
   if(!onSale.length){
     return packInfoResult({
       mode:"drive",
-      sub:"No car parks currently on sale",
+      sub:`No car parks on sale for ${ {fri:"Friday",sat:"Saturday",sun:"Sunday"}[currentDay] }`,
       tip: soldOut.length
-        ? `Event car parks are currently sold out (${soldOut.map(c=>c.name).join(", ")}). More may be released — check the official parking page. There is no parking at the venue.`
+        ? `Event car parks for ${ {fri:"Friday",sat:"Saturday",sun:"Sunday"}[currentDay] } are sold out (${soldOut.map(c=>c.name).join(", ")}). More may be released — check the official parking page. There is no parking at the venue.`
         : "Pre-bookable event parking is not currently on sale. Check the official parking page for updates. There is no parking at the venue.",
       link:{ url:EVENT.driveInfo.bookingUrl, label:EVENT.driveInfo.bookingLabel }
     });
@@ -824,17 +938,16 @@ async function buildDrive(origin){
   const best = valid[0];
 
   const driveKm = best.t.km;
-  const jLabel = best.cp.junction==="j10" ? "Junction 10" : "Junction 9";
+  const jLabel = best.cp.junction==="j10" ? "Junction 10" : "Junction 9, then the A91";
   const w3wTxt = best.cp.w3w ? ` what3words: ///${best.cp.w3w}.` : "";
-  const dayTxt = best.cp.days==="satsun" ? " Note: this car park operates Saturday & Sunday only." : "";
-  const soldTxt = soldOut.length ? ` (${soldOut.map(c=>c.name).join(", ")} ${soldOut.length>1?"are":"is"} sold out.)` : "";
+  const soldTxt = soldOut.length ? ` (${soldOut.map(c=>c.name).join(", ")} ${soldOut.length>1?"are":"is"} sold out for ${ {fri:"Friday",sat:"Saturday",sun:"Sunday"}[currentDay] }.)` : "";
   return packResult({
     mode:"drive", durMin:best.t.min + (best.cp.walkMin || DRIVE_WALK_EXTRA_MIN), km:driveKm,
     co2:driveKm*CO2.drive,
     cost:`£${best.cp.price.toFixed(2)} + fuel`,
     sub:`Park at ${best.cp.name}`,
     badges:[],
-    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)}; there is no parking at the venue.${dayTxt}${w3wTxt}${soldTxt}`,
+    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)}; there is no parking at the venue.${w3wTxt}${soldTxt}`,
     link:{ url:best.cp.parkUrl, label:EVENT.driveInfo.bookingLabel },
     routeResult:best.r
   });
@@ -959,6 +1072,27 @@ function renderResults(){
 
     list.appendChild(card);
   });
+
+  // Local options (taxi rank, family PUDO): only for origins within an hour's drive
+  const LOCAL_MAX_MIN = 60;
+  if(Array.isArray(EVENT.localInfo) && originDriveMin !== null && originDriveMin <= LOCAL_MAX_MIN){
+    EVENT.localInfo.forEach(li=>{
+      const lc = document.createElement("div");
+      lc.className = "card coach-card";
+      lc.innerHTML = `
+        <div class="coach-body">
+          <div class="card-top" style="margin-bottom:8px">
+            <span class="mode-ico" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none">${li.icon}</svg></span>
+            <span>
+              <span class="mode-title">${li.title}</span>
+              <span class="mode-sub" style="display:block">${li.sub}</span>
+            </span>
+          </div>
+          <p class="coach-note">${li.note}</p>
+        </div>`;
+      list.appendChild(lc);
+    });
+  }
 
   // Coach: a non-routed booking option, always pinned to the end of the list
   if(EVENT.showCoach && EVENT.coachInfo){
