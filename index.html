@@ -587,6 +587,17 @@ function cpStatus(cp, day){
   return s;
 }
 
+/* Departure datetime for transit routing on the selected event day.
+   Fri 11 Sept 2026 ~14:00 (evening show, gates 16:00) · Sat/Sun 12–13 Sept ~09:30
+   (day shows, gates 11:00). Month is 0-indexed (8 = September). */
+function eventDepartureTime(day){
+  const d = { fri:[11,14,0], sat:[12,9,30], sun:[13,9,30] }[day] || [12,9,30];
+  return new Date(2026, 8, d[0], d[1], d[2]);
+}
+function eventDayLabel(day){
+  return { fri:"Friday 11 September", sat:"Saturday 12 September", sun:"Sunday 13 September" }[day];
+}
+
 const MODE_META = {
   shuttle:{ label:"Park & Ride / Shuttle", icon:'<path d="M4 16V7a2 2 0 012-2h12a2 2 0 012 2v9M4 16h16M4 16v2a1 1 0 001 1h1a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h1a1 1 0 001-1v-2M7 19V9m10 10V9M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
   train:{   label:"Train", icon:'<rect x="6" y="3" width="12" height="14" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M6 11h12M9 21l-2 0m8 0l2 0M9.5 21l1.5-3m2 3l-1.5-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="14" r="1" fill="currentColor"/><circle cx="15" cy="14" r="1" fill="currentColor"/>'},
@@ -884,7 +895,12 @@ function driveRequest(origin, destination){
 
 /* ---- single-mode builder (train / walk / cycle — direct to venue) ---- */
 async function buildSimple(origin, mode, gMode){
-  const r = await route({ origin, destination:venueLatLng, travelMode:google.maps.TravelMode[gMode] });
+  const req = { origin, destination:venueLatLng, travelMode:google.maps.TravelMode[gMode] };
+  if(gMode === "TRANSIT"){
+    // query the actual event-day timetable, not "leave now"
+    req.transitOptions = { departureTime: eventDepartureTime(currentDay) };
+  }
+  const r = await route(req);
   if(!r) return null;
   const t = legTotals(r);
   if(mode==="walk"  && t.km > WALK_MAX_KM)  return null;
@@ -894,8 +910,10 @@ async function buildSimple(origin, mode, gMode){
   if(mode==="train"){
     co2 = t.km*CO2.train;
     cost = t.fare ? t.fare.text : "Check fares";
-    sub = "via Stirling Station";
-    tip = EVENT.trainInfo.tip;
+    const dep = eventDepartureTime(currentDay);
+    const depTxt = dep.toTimeString().slice(0,5);
+    sub = `via Stirling Station · ${ {fri:"Fri",sat:"Sat",sun:"Sun"}[currentDay] } timetable`;
+    tip = `Times are based on a ${depTxt} departure on ${eventDayLabel(currentDay)}. ` + EVENT.trainInfo.tip;
     link = { url:EVENT.trainInfo.bookingUrl, label:"Book train tickets" };
   } else { // walk / cycle
     co2 = 0; cost = "Free";
