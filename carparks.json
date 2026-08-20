@@ -1,0 +1,85 @@
+{
+  "_readme": "CAR PARK CONFIG — BBC Radio 2 in the Park, Stirling 2026 journey planner. To change availability: edit the 'status' line of a car park, then commit. Netlify redeploys in ~60 seconds. Valid status values: 'onsale' (bookable, shown normally), 'soldout' (shown greyed with a Sold Out badge, not routed to), 'hidden' (not shown at all). Do not change 'zone' or 'junction' unless the TTP changes. 'days' restricts availability: 'all' or 'satsun'. Prices are per TTP v4.0 (flat £15). See CARPARK-EDIT-GUIDE.md in this repo for step-by-step instructions.",
+  "updated": "2026-08-10",
+  "source": "TTP v4.0 (05/08/26), section 7.3",
+  "carParks": [
+    {
+      "name": "Engine Shed",
+      "status": "onsale",
+      "zone": "Red",
+      "junction": "j9",
+      "days": "all",
+      "address": "Engine Shed, Stirling FK8 1RB",
+      "w3w": "reveal.silver.brand",
+      "price": 15.0,
+      "walkMin": 23,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "Beside the Engine Shed, near the station. Red Walking Route into the venue."
+    },
+    {
+      "name": "Thistles Multi-Storey",
+      "status": "hidden",
+      "zone": "Red",
+      "junction": "j9",
+      "days": "all",
+      "address": "The Thistles Shopping Centre, Stirling",
+      "w3w": "",
+      "price": 15.0,
+      "walkMin": 18,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "City-centre multi-storey. Red Walking Route into the venue."
+    },
+    {
+      "name": "Forthside Car Park",
+      "status": "onsale",
+      "zone": "Red",
+      "junction": "j9",
+      "days": "all",
+      "address": "Forthside Car Park, Stirling FK8 1QZ",
+      "w3w": "normal.loser.worth",
+      "price": 15.0,
+      "walkMin": 25,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "Near the station and Forthside. Red Walking Route into the venue."
+    },
+    {
+      "name": "Wellgreen Multi-Storey",
+      "status": "hidden",
+      "zone": "Red",
+      "junction": "j9",
+      "days": "all",
+      "address": "Wellgreen Car Park, Stirling FK8 2DY",
+      "w3w": "galaxy.park.rescue",
+      "price": 15.0,
+      "walkMin": 19,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "City-centre multi-storey. Red Walking Route into the venue."
+    },
+    {
+      "name": "Kildean",
+      "status": "hidden",
+      "zone": "Blue",
+      "junction": "j10",
+      "days": "satsun",
+      "address": "Kildean Business Hub, Stirling",
+      "w3w": "",
+      "price": 15.0,
+      "walkMin": 22,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "North of the centre. Saturday & Sunday only. Blue Walking Route into the venue."
+    },
+    {
+      "name": "Forth Valley College",
+      "status": "soldout",
+      "zone": "Blue",
+      "junction": "j10",
+      "days": "satsun",
+      "address": "Forth Valley College, Stirling FK8 1SE",
+      "w3w": "really.stays.dumps",
+      "price": 15.0,
+      "walkMin": 19,
+      "parkUrl": "https://www.officialbbceventparking.com/Events.aspx?CustomerId=91",
+      "notes": "Stirling campus. Saturday & Sunday only. Blue Walking Route into the venue."
+    }
+  ]
+}

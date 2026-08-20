@@ -75,8 +75,7 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
    ------------------------------------------------------------------ */
 .brand-logo{display:flex;align-items:center;gap:8px;min-width:0}
 .bar-logo{height:30px;width:auto;display:block}
-.ep-logo{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:#fff;letter-spacing:.04em;line-height:1;white-space:nowrap}
-.ep-logo .ep-e{color:var(--blue-soft)}
+.ep-logo-img{height:22px;width:auto;display:block}
 .ep-divider{width:1px;height:20px;background:rgba(255,255,255,.28);flex-shrink:0}
 .ep-sub{font-family:'Noto Sans',sans-serif;font-size:11px;font-weight:500;color:var(--blue-soft);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .bbc-blocks{display:flex;gap:3px}
@@ -175,16 +174,47 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 
 /* notice banner */
 .notice{
-  margin:14px 16px;background:var(--blue-light);border:1px solid #CFE0F5;
-  border-left:4px solid var(--navy);border-radius:10px;padding:13px 14px;
+  margin:12px 16px;background:var(--blue-light);border:1px solid #CFE0F5;
+  border-left:4px solid var(--navy);border-radius:10px;overflow:hidden;
   font-size:13px;line-height:1.5;color:#2A3550;
 }
 .notice strong{color:var(--ink)}
-.notice .notice-head{
-  display:flex;align-items:center;gap:7px;font-weight:700;color:var(--ink);
-  font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;
+.notice-toggle{
+  width:100%;display:flex;align-items:center;gap:7px;background:none;border:none;
+  font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left;
+  font-size:12.5px;padding:11px 13px;
 }
+.notice-toggle .nt-title{text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.notice-toggle .nt-summary{font-weight:500;color:#44506E;font-size:12px;text-transform:none;letter-spacing:0;
+  flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notice-toggle .chev{transition:transform .2s;flex-shrink:0}
+.notice-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.notice-toggle[aria-expanded="true"] .nt-summary{visibility:hidden}
+#notice-body{display:none;padding:0 13px 12px}
+#notice-body.open{display:block}
 .notice a{color:var(--blue-dk);font-weight:600}
+
+/* all car parks list */
+.allcp{margin:0 16px 4px}
+.allcp-toggle{
+  display:flex;align-items:center;gap:7px;background:none;border:none;cursor:pointer;
+  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--blue-dk);padding:2px 0;
+}
+.allcp-toggle .chev{transition:transform .2s}
+.allcp-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.allcp-list{display:none;margin-top:8px}
+.allcp-list.open{display:block}
+.cp-row{
+  display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);
+  border-radius:9px;padding:9px 11px;margin-bottom:7px;font-size:12.5px;
+}
+.cp-name{font-weight:600;color:var(--ink)}
+.cp-meta{color:var(--grey);font-size:11.5px}
+.cp-status{margin-left:auto;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  padding:3px 8px;border-radius:999px;white-space:nowrap}
+.cp-status.onsale{background:var(--green-bg);color:var(--green)}
+.cp-status.soldout{background:#F6DEDC;color:#8F241D}
+.cp-book{font-weight:600;color:var(--blue-dk);font-size:11.5px;white-space:nowrap}
 
 /* results */
 .results{padding:6px 16px 28px}
@@ -225,6 +255,7 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 .badges{display:flex;gap:5px;flex-wrap:wrap;margin-left:auto;justify-content:flex-end}
 .badge{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:3px 8px;border-radius:999px;white-space:nowrap}
 .badge-rec{background:var(--navy);color:#fff}
+.badge-soldout{background:#B3372F;color:#fff}
 .badge-eco{background:var(--green-bg);color:var(--green)}
 .badge-zero{background:var(--green);color:#fff}
 
@@ -315,7 +346,7 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
 <!-- ============================ TOP BAR ============================ -->
 <header class="topbar">
   <div class="brand-logo" id="brand-logo">
-    <span class="ep-logo"><span class="ep-e">EP</span> TEAM</span><span class="ep-divider" aria-hidden="true"></span><span class="ep-sub">Journey Planner</span>
+    <img class="ep-logo-img" alt="EP Team" src="data:image/png;base64,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"><span class="ep-divider" aria-hidden="true"></span><span class="ep-sub">Journey Planner</span>
   </div>
   <div class="topbar-centre" id="topbar-event">City Park, Stirling</div>
   <div class="topbar-date"><span class="dot" aria-hidden="true"></span><span id="topbar-date">11–13 September 2026</span></div>
@@ -349,17 +380,31 @@ h1,h2,h3{font-family:'Poppins','Noto Sans',sans-serif;text-transform:uppercase;l
     <div class="priority" role="group" aria-label="Journey priority">
       <div class="priority-legend" id="prio-legend">Sort journeys by</div>
       <div class="pill-row" aria-labelledby="prio-legend">
-        <button class="pill" data-prio="balanced" aria-pressed="true" type="button"><span class="pdot" aria-hidden="true"></span>Balanced</button>
-        <button class="pill" data-prio="eco" aria-pressed="false" type="button"><span class="pdot" aria-hidden="true"></span>Eco</button>
-        <button class="pill" data-prio="fastest" aria-pressed="false" type="button"><span class="pdot" aria-hidden="true"></span>Fastest</button>
+        <button class="pill" data-prio="eco" aria-pressed="true" type="button"><span class="pdot" aria-hidden="true"></span>🌿 Eco</button>
+        <button class="pill" data-prio="fastest" aria-pressed="false" type="button"><span class="pdot" aria-hidden="true"></span>⚡ Fastest</button>
       </div>
     </div>
 
     <!-- notice -->
     <aside class="notice" id="notice-banner" aria-label="Important travel notice">
-      <div class="notice-head"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9l-8 13.8A2 2 0 004 21h16a2 2 0 001.7-3.3l-8-13.8a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg> Before you travel</div>
+      <button class="notice-toggle" id="notice-toggle" type="button" aria-expanded="false" aria-controls="notice-body">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex-shrink:0"><path d="M12 9v4m0 4h.01M10.3 3.9l-8 13.8A2 2 0 004 21h16a2 2 0 001.7-3.3l-8-13.8a2 2 0 00-3.4 0z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span class="nt-title">Before you travel</span>
+        <span class="nt-summary">Parking pre-book only · local closures · rail changes</span>
+        <svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <div id="notice-body"></div>
     </aside>
+
+    <!-- all car parks -->
+    <div class="allcp">
+      <button class="allcp-toggle" id="allcp-toggle" type="button" aria-expanded="false" aria-controls="allcp-list">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 16l1.2-4.3A2 2 0 018.1 10h7.8a2 2 0 011.9 1.7L19 16M5 16h14M5 16v2a1 1 0 001 1h1a1 1 0 001-1v-1m8 0v1a1 1 0 001 1h1a1 1 0 001-1v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        View all event car parks
+        <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="allcp-list" class="allcp-list"></div>
+    </div>
 
     <!-- results -->
     <section class="results" aria-live="polite" aria-label="Journey options">
@@ -433,14 +478,13 @@ const EVENT = {
   // above and buildShuttle() are no longer used by the planner — retained only for
   // reference should Park & Ride return. Castleview remains the coach/transport hub.
 
-  // Park & Walk car parks — DRIVE option routes here (park, then walk into City Park),
-  // Only car parks marked "Ready for Sale = Yes" on the master parking list are shown.
-  // Junction is given as guidance in the card text only (J9 = Red, J10 = Blue); the route
-  // itself is NOT force-routed through a junction (that created odd out-and-back detours).
-  // Add more here as further car parks flip to "Ready for Sale = Yes".
+  // Park & Walk car parks — DRIVE option routes here (park, then walk into City Park).
+  // LIVE LIST IS LOADED FROM carparks.json (same repo) so availability can be changed
+  // without touching this file — see CARPARK-EDIT-GUIDE.md. The list below is only a
+  // FALLBACK used if carparks.json cannot be fetched. Prices per TTP v4.0 (flat £15).
   parkWalk: [
-    { name:"Engine Shed",          zone:"Red",  junction:"j9",  address:"Engine Shed, Stirling FK8 1RB",          w3w:"reveal.silver.brand", price:17.50, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Beside the Engine Shed, near the station." },
-    { name:"Forth Valley College", zone:"Blue", junction:"j10", address:"Forth Valley College, Stirling FK8 1SE", w3w:"really.stays.dumps",  price:22.50, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Stirling campus." }
+    { name:"Engine Shed",          status:"onsale", zone:"Red",  junction:"j9",  days:"all",    address:"Engine Shed, Stirling FK8 1RB",          w3w:"reveal.silver.brand", price:15.00, walkMin:23, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Beside the Engine Shed, near the station. Red Walking Route into the venue." },
+    { name:"Forth Valley College", status:"onsale", zone:"Blue", junction:"j10", days:"satsun", address:"Forth Valley College, Stirling FK8 1SE", w3w:"really.stays.dumps",  price:15.00, walkMin:19, parkUrl:"https://www.officialbbceventparking.com/Events.aspx?CustomerId=91", notes:"Stirling campus. Saturday & Sunday only. Blue Walking Route into the venue." }
   ],
 
   trainInfo: {
@@ -497,7 +541,7 @@ const ENRICH_ENDPOINT = ""; // e.g. "/.netlify/functions/enrich"
 /* ---- GLOBALS -------------------------------------------------------------- */
 let map, geocoder, dirService, dirRenderer, autocomplete;
 let venueLatLng = null, venueMarker = null, venueInfo = null, originMarker = null;
-let currentResults = [], currentPriority = "balanced";
+let currentResults = [], currentPriority = "eco";
 
 const MODE_META = {
   shuttle:{ label:"Park & Ride / Shuttle", icon:'<path d="M4 16V7a2 2 0 012-2h12a2 2 0 012 2v9M4 16h16M4 16v2a1 1 0 001 1h1a1 1 0 001-1v-2m10 0v2a1 1 0 001 1h1a1 1 0 001-1v-2M7 19V9m10 10V9M7 12h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'},
@@ -510,6 +554,17 @@ const MODE_META = {
 
 /* ============================ MAP INIT ============================ */
 function initMap(){
+  // Load the live car park list (carparks.json in this repo). Falls back to the
+  // baked-in EVENT.parkWalk list if the file can't be fetched or is malformed.
+  fetch("carparks.json", { cache:"no-store" })
+    .then(r=> r.ok ? r.json() : null)
+    .then(d=>{
+      if(d && Array.isArray(d.carParks) && d.carParks.length){
+        EVENT.parkWalk = d.carParks;
+      }
+    })
+    .catch(e=> console.warn("carparks.json unavailable — using built-in fallback list.", e));
+
   // Wire up the UI and static content FIRST, so the planner still works even
   // if optional Maps features (autocomplete / markers) fail to load.
   document.getElementById("notice-body").innerHTML = EVENT.notice;
@@ -584,8 +639,43 @@ function placeVenuePin(){
  }catch(e){ console.warn("Venue marker unavailable (marker API may be gated for this key).", e); }
 }
 
+/* ---- all-car-parks list (driven by carparks.json via EVENT.parkWalk) ---- */
+function renderAllCarParks(){
+  const el = document.getElementById("allcp-list");
+  const cps = EVENT.parkWalk.filter(c=> c.status!=="hidden");
+  if(!cps.length){ el.innerHTML = '<div class="cp-row"><span class="cp-meta">Event car park details will appear here when parking goes on sale.</span></div>'; return; }
+  el.innerHTML = cps.map(c=>{
+    const j = c.junction==="j10" ? "M9 J10" : "M9 J9";
+    const day = c.days==="satsun" ? " · Sat & Sun only" : "";
+    const status = c.status==="soldout"
+      ? '<span class="cp-status soldout">Sold out</span>'
+      : '<span class="cp-status onsale">On sale</span>';
+    const book = c.status==="soldout" ? "" : `<a class="cp-book" href="${c.parkUrl}" target="_blank" rel="noopener">Book →</a>`;
+    return `<div class="cp-row">
+      <span>
+        <span class="cp-name">${c.name}</span><br>
+        <span class="cp-meta">${c.zone} zone · ${j} · ~${c.walkMin} min walk${day}</span>
+      </span>
+      ${status}${book}
+    </div>`;
+  }).join("");
+}
+
 /* ============================ UI BINDINGS ============================ */
 function bindUI(){
+  const nt = document.getElementById("notice-toggle");
+  nt.addEventListener("click", ()=>{
+    const open = nt.getAttribute("aria-expanded")==="true";
+    nt.setAttribute("aria-expanded", String(!open));
+    document.getElementById("notice-body").classList.toggle("open", !open);
+  });
+  const at = document.getElementById("allcp-toggle");
+  at.addEventListener("click", ()=>{
+    const open = at.getAttribute("aria-expanded")==="true";
+    at.setAttribute("aria-expanded", String(!open));
+    document.getElementById("allcp-list").classList.toggle("open", !open);
+    if(!open) renderAllCarParks();
+  });
   document.getElementById("btn-plan").addEventListener("click", planJourney);
   document.getElementById("origin-input").addEventListener("keydown", e=>{
     if(e.key==="Enter"){ e.preventDefault(); planJourney(); }
@@ -710,7 +800,22 @@ async function buildSimple(origin, mode, gMode){
 /* ---- drive: force the official approach, then route to the nearest Park & Walk car park
    (there is no parking at the venue), with a short walk into City Park ---- */
 async function buildDrive(origin){
-  const results = await Promise.all(EVENT.parkWalk.map(cp=>
+  // Only route to car parks that are ON SALE (status from carparks.json).
+  // 'soldout' sites are mentioned but never routed to; 'hidden' sites are ignored.
+  const onSale  = EVENT.parkWalk.filter(cp=> (cp.status||"onsale")==="onsale");
+  const soldOut = EVENT.parkWalk.filter(cp=> cp.status==="soldout");
+  if(!onSale.length){
+    return packInfoResult({
+      mode:"drive",
+      sub:"No car parks currently on sale",
+      tip: soldOut.length
+        ? `Event car parks are currently sold out (${soldOut.map(c=>c.name).join(", ")}). More may be released — check the official parking page. There is no parking at the venue.`
+        : "Pre-bookable event parking is not currently on sale. Check the official parking page for updates. There is no parking at the venue.",
+      link:{ url:EVENT.driveInfo.bookingUrl, label:EVENT.driveInfo.bookingLabel }
+    });
+  }
+
+  const results = await Promise.all(onSale.map(cp=>
     route(driveRequest(origin, cp.address)).then(r=> r ? {cp,r,t:legTotals(r)} : null)
   ));
   const valid = results.filter(Boolean);
@@ -721,16 +826,29 @@ async function buildDrive(origin){
   const driveKm = best.t.km;
   const jLabel = best.cp.junction==="j10" ? "Junction 10" : "Junction 9";
   const w3wTxt = best.cp.w3w ? ` what3words: ///${best.cp.w3w}.` : "";
+  const dayTxt = best.cp.days==="satsun" ? " Note: this car park operates Saturday & Sunday only." : "";
+  const soldTxt = soldOut.length ? ` (${soldOut.map(c=>c.name).join(", ")} ${soldOut.length>1?"are":"is"} sold out.)` : "";
   return packResult({
     mode:"drive", durMin:best.t.min + (best.cp.walkMin || DRIVE_WALK_EXTRA_MIN), km:driveKm,
     co2:driveKm*CO2.drive,
     cost:`£${best.cp.price.toFixed(2)} + fuel`,
     sub:`Park at ${best.cp.name}`,
     badges:[],
-    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)} including the booking fee; there is no parking at the venue.${w3wTxt}`,
+    tip:`Park at ${best.cp.name} — a ${best.cp.zone} parking area, so exit the M9 at ${jLabel}. It's about a ${best.cp.walkMin}-minute walk into City Park. Pre-booked parking is £${best.cp.price.toFixed(2)}; there is no parking at the venue.${dayTxt}${w3wTxt}${soldTxt}`,
     link:{ url:best.cp.parkUrl, label:EVENT.driveInfo.bookingLabel },
     routeResult:best.r
   });
+}
+
+/* Non-routed informational result (e.g. all car parks sold out) */
+function packInfoResult(o){
+  const meta = MODE_META[o.mode];
+  return {
+    mode:o.mode, label:meta.label, icon:meta.icon, info:true,
+    durMin:99999, durText:"—", km:0, co2:0, co2Text:"—",
+    cost:"—", sub:o.sub, badges:[{cls:"badge-soldout",txt:"Sold out"}], tip:o.tip, link:o.link,
+    routeResult:null
+  };
 }
 
 /* ---- shuttle: drive to each hub, pick closest ---- */
@@ -776,10 +894,10 @@ function fmtDur(m){ if(m<60) return m+" min"; const h=Math.floor(m/60), r=m%60; 
 /* ============================ RENDER ============================ */
 function sortResults(){
   const arr = currentResults.slice();
-  if(currentPriority==="eco")     arr.sort((a,b)=> a.co2 - b.co2);
-  else if(currentPriority==="fastest") arr.sort((a,b)=> a.durMin - b.durMin);
-  // balanced = config order (modes array order)
-  else arr.sort((a,b)=> EVENT.modes.indexOf(a.mode) - EVENT.modes.indexOf(b.mode));
+  if(currentPriority==="fastest") arr.sort((a,b)=> a.durMin - b.durMin);
+  else arr.sort((a,b)=> a.co2 - b.co2);   // eco (default): lowest CO2 first
+  // non-routed info cards always sink to the bottom
+  arr.sort((a,b)=> (a.info?1:0) - (b.info?1:0));
   return arr;
 }
 
@@ -788,11 +906,11 @@ function renderResults(){
   const list = document.getElementById("results-list");
   list.innerHTML = "";
   arr.forEach((r,i)=>{
-    const recommended = i===0;
+    const recommended = i===0 && !r.info;
     const badges = (recommended ? `<span class="badge badge-rec">Recommended</span>` : "")
       + r.badges.map(b=>`<span class="badge ${b.cls}">${b.txt}</span>`).join("");
     const dirId = `dir-${r.mode}`;
-    const stepHtml = steps(r.routeResult).slice(0,8).map(s=>`<li>${s}</li>`).join("");
+    const stepHtml = r.routeResult ? steps(r.routeResult).slice(0,8).map(s=>`<li>${s}</li>`).join("") : "";
     const linkHtml = r.link ? `<a class="dir-link" href="${r.link.url}" target="_blank" rel="noopener">${r.link.label} →</a>` : "";
 
     const card = document.createElement("div");
@@ -818,13 +936,14 @@ function renderResults(){
         <svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="dir-panel" id="${dirId}" role="region" aria-label="${r.label} directions">
-        <ol>${stepHtml || '<li>Route details will appear on the map.</li>'}</ol>
+        <ol>${stepHtml || '<li>See the note below for current availability.</li>'}</ol>
         <div class="dir-tip"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.6.6 1 1.2 1 2h6c0-.8.4-1.4 1-2A6 6 0 0012 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>${r.tip}</span></div>
         ${linkHtml}
       </div>`;
 
-    // show route on map
+    // show route on map (routed results only)
     card.querySelector(".card-main").addEventListener("click", ()=>{
+      if(!r.routeResult) return;
       document.querySelectorAll(".card").forEach(c=> c.classList.remove("active"));
       card.classList.add("active");
       dirRenderer.setDirections(r.routeResult);
@@ -861,8 +980,9 @@ function renderResults(){
     list.appendChild(cc);
   }
 
-  // draw the recommended (first) route by default
-  if(arr[0]) dirRenderer.setDirections(arr[0].routeResult);
+  // draw the recommended (first routed) route by default
+  const firstRouted = arr.find(x=> x.routeResult);
+  if(firstRouted) dirRenderer.setDirections(firstRouted.routeResult);
 }
 
 /* Google calls this if the API key fails auth (invalid key / referrer not allowed / billing off) */
